@@ -22,21 +22,28 @@ public class RoleSeeder {
         }
         
         try {
+            // Dar tiempo a Hibernate para crear las tablas
+            Thread.sleep(12000);
+            
             createRoleIfNotExists("ROLE_USER");
             createRoleIfNotExists("ROLE_ADMIN");
             rolesInitialized = true;
         } catch (Exception e) {
-            System.err.println("Error al crear roles: " + e.getMessage());
+            System.err.println("⚠️  Error al crear roles (reintentar en siguiente inicio): " + e.getMessage());
         }
     }
 
     private void createRoleIfNotExists(String roleName) {
-        if (roleRepository.findByName(roleName).isEmpty()) {
-            Role role = new Role(roleName);
-            roleRepository.save(role);
-            System.out.println("✅ Rol creado: " + roleName);
-        } else {
-            System.out.println("ℹ️  Rol ya existe: " + roleName);
+        try {
+            if (roleRepository.findByName(roleName).isEmpty()) {
+                Role role = new Role(roleName);
+                roleRepository.save(role);
+                System.out.println("✅ Rol creado: " + roleName);
+            } else {
+                System.out.println("ℹ️  Rol ya existe: " + roleName);
+            }
+        } catch (Exception e) {
+            System.err.println("Error creando rol " + roleName + ": " + e.getMessage());
         }
     }
 }
