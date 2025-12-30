@@ -1,21 +1,20 @@
 package com.si2.parcial2.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.annotation.Order;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import com.si2.parcial2.entities.Role;
 import com.si2.parcial2.repositories.RoleRepository;
 
 @Component
-@Order(1) // Ejecutar primero
-public class RoleSeeder implements CommandLineRunner {
+public class RoleSeeder {
 
     @Autowired
     private RoleRepository roleRepository;
 
-    @Override
-    public void run(String... args) throws Exception {
+    @EventListener(ApplicationReadyEvent.class)
+    public void seedRoles() {
         createRoleIfNotExists("ROLE_USER");
         createRoleIfNotExists("ROLE_ADMIN");
     }

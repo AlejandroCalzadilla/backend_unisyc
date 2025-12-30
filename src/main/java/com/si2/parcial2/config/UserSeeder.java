@@ -1,16 +1,15 @@
 package com.si2.parcial2.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.annotation.Order;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import com.si2.parcial2.entities.User;
 import com.si2.parcial2.repositories.UserRepository;
 import com.si2.parcial2.services.UserService;
 
 @Component
-@Order(2) // Ejecutar después del RoleSeeder
-public class UserSeeder implements CommandLineRunner {
+public class UserSeeder {
 
     @Autowired
     private UserRepository userRepository;
@@ -18,8 +17,8 @@ public class UserSeeder implements CommandLineRunner {
     @Autowired
     private UserService userService;
 
-    @Override
-    public void run(String... args) throws Exception {
+    @EventListener(ApplicationReadyEvent.class)
+    public void seedUsers() {
         // Crear usuarios de ejemplo si no existen
         createUserIfNotExists("admin", "admin123", "admin@unisys.com", true);
         createUserIfNotExists("profesor", "profesor123", "profesor@unisys.com", false);
@@ -31,6 +30,7 @@ public class UserSeeder implements CommandLineRunner {
             User user = new User();
             user.setUsername(username);
             user.setPassword(password);
+          
             user.setAdmin(isAdmin);
             
             userService.save(user); // Usa UserService para asignar roles automáticamente
@@ -40,3 +40,4 @@ public class UserSeeder implements CommandLineRunner {
         }
     }
 }
+    
