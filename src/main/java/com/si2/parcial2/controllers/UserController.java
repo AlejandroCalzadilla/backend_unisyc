@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +37,9 @@ public class UserController {
     @Autowired
     private UserService service;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @GetMapping
     public List<User> list() {
         return service.findAll();
@@ -51,6 +58,33 @@ public class UserController {
     public ResponseEntity<?> register(@Valid @RequestBody User user, BindingResult result) {
         user.setAdmin(false);
         return create(user, result);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
+        try {
+            String username = credentials.get("username");
+            String password = credentials.get("password");
+
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password));
+
+            if (authentication.isAuthenticated()) {
+                return ResponseEntity.ok(new HashMap<String, String>() {{
+                    put("message", "Login exitoso");
+                    put("username", username);
+                }});
+            }
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new HashMap<String, String>() {{
+                        put("error", "Credenciales inválidas");
+                    }});
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new HashMap<String, String>() {{
+                    put("error", "Error en la autenticación");
+                }});
     }
 
     private ResponseEntity<?> validation(BindingResult result) {

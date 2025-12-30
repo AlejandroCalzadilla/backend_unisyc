@@ -165,6 +165,16 @@ BackendUnivSys/
 
 ## 🛠️ Endpoints Principales
 
+### Autenticación
+- `POST /api/users/login` - Autenticación (username + password)
+- `POST /api/users/register` - Registro de usuario
+
+### Gestión de Usuarios
+- `GET /api/users` - Lista de usuarios
+- `GET /api/users/{id}` - Obtener usuario por ID
+- `POST /api/users` - Crear usuario (requiere ADMIN)
+
+### Recursos Académicos
 - `GET /api/asistencia` - Lista asistencias
 - `GET /api/aulas` - Lista aulas
 - `GET /api/carreras` - Lista carreras
@@ -174,7 +184,23 @@ BackendUnivSys/
 - `GET /api/materias` - Lista materias
 - `GET /api/modulos` - Lista módulos
 - `GET /api/profesores` - Lista profesores
-- `POST /api/auth/login` - Autenticación
+
+### Ejemplos de uso
+
+**Login:**
+```bash
+curl -X POST http://localhost:8080/api/users/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"admin123"}'
+```
+
+**Respuesta:**
+```json
+{
+  "message": "Login exitoso",
+  "username": "admin"
+}
+```
 
 Consulta la documentación Swagger en `http://localhost:8080/swagger-ui.html` (si está habilitado)
 
