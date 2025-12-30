@@ -1,0 +1,25 @@
+# ============================================
+# Configuración de ejemplo - RENAME a application.properties
+# ============================================
+# Para desarrollo local, reemplaza los valores con tus credenciales reales
+# Para producción (Render, Heroku, etc.), usa variables de entorno
+# ============================================
+
+spring.application.name=parcial2
+
+# Base de datos
+# Local: jdbc:postgresql://localhost:5432/database_name
+# Neon/Render: postgresql://user:password@host:port/database
+spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/unisyc}
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME:postgres}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:your_password_here}
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA / Hibernate
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.show-sql=false
+spring.jpa.hibernate.ddl-auto=update
+
+# Logging
+logging.level.root=INFO
+logging.level.com.si2.parcial2=DEBUG
