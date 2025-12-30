@@ -9,7 +9,8 @@ spring.application.name=parcial2
 
 # Base de datos
 # Local: jdbc:postgresql://localhost:5432/database_name
-# Neon/Render: postgresql://user:password@host:port/database
+# Neon/Render: jdbc:postgresql://host:port/database?sslmode=require&channelBinding=require
+# NOTA: En Render, estas variables se configuran en el panel Environment
 spring.datasource.url=${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/unisyc}
 spring.datasource.username=${SPRING_DATASOURCE_USERNAME:postgres}
 spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:your_password_here}
@@ -20,6 +21,6 @@ spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 spring.jpa.show-sql=false
 spring.jpa.hibernate.ddl-auto=update
 
-# Logging
+# Logging (opcional)
 logging.level.root=INFO
 logging.level.com.si2.parcial2=DEBUG

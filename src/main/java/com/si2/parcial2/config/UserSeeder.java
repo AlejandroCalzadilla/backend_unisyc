@@ -27,7 +27,9 @@ public class UserSeeder {
         
         try {
             // Dar tiempo a Hibernate para crear las tablas
-            Thread.sleep(12000);
+            System.out.println("⏳ Esperando a que Hibernate cree las tablas (5 segundos)...");
+            Thread.sleep(5000);
+            System.out.println("✅ Iniciando creación de usuarios");
             
             // Crear usuarios de ejemplo si no existen
             createUserIfNotExists("admin", "admin123", "admin@unisys.com", true);
@@ -35,7 +37,8 @@ public class UserSeeder {
             createUserIfNotExists("estudiante", "estudiante123", "estudiante@unisys.com", false);
             usersInitialized = true;
         } catch (Exception e) {
-            System.err.println("⚠️  Error al crear usuarios (reintentar en siguiente inicio): " + e.getMessage());
+            System.err.println("⚠️  Error al crear usuarios: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

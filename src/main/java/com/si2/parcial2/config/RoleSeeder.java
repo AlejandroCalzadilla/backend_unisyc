@@ -23,13 +23,16 @@ public class RoleSeeder {
         
         try {
             // Dar tiempo a Hibernate para crear las tablas
-            Thread.sleep(12000);
+            System.out.println("⏳ Esperando a que Hibernate cree las tablas (5 segundos)...");
+            Thread.sleep(5000);
+            System.out.println("✅ Iniciando creación de roles");
             
             createRoleIfNotExists("ROLE_USER");
             createRoleIfNotExists("ROLE_ADMIN");
             rolesInitialized = true;
         } catch (Exception e) {
-            System.err.println("⚠️  Error al crear roles (reintentar en siguiente inicio): " + e.getMessage());
+            System.err.println("⚠️  Error al crear roles: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
