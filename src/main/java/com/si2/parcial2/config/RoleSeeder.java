@@ -1,7 +1,7 @@
 package com.si2.parcial2.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import com.si2.parcial2.entities.Role;
@@ -12,11 +12,22 @@ public class RoleSeeder {
 
     @Autowired
     private RoleRepository roleRepository;
+    
+    private boolean rolesInitialized = false;
 
-    @EventListener(ApplicationReadyEvent.class)
+    @EventListener(ContextRefreshedEvent.class)
     public void seedRoles() {
-        createRoleIfNotExists("ROLE_USER");
-        createRoleIfNotExists("ROLE_ADMIN");
+        if (rolesInitialized) {
+            return; // Solo ejecutar una vez
+        }
+        
+        try {
+            createRoleIfNotExists("ROLE_USER");
+            createRoleIfNotExists("ROLE_ADMIN");
+            rolesInitialized = true;
+        } catch (Exception e) {
+            System.err.println("Error al crear roles: " + e.getMessage());
+        }
     }
 
     private void createRoleIfNotExists(String roleName) {

@@ -1,7 +1,7 @@
 package com.si2.parcial2.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import com.si2.parcial2.entities.User;
@@ -16,13 +16,24 @@ public class UserSeeder {
 
     @Autowired
     private UserService userService;
+    
+    private boolean usersInitialized = false;
 
-    @EventListener(ApplicationReadyEvent.class)
+    @EventListener(ContextRefreshedEvent.class)
     public void seedUsers() {
-        // Crear usuarios de ejemplo si no existen
-        createUserIfNotExists("admin", "admin123", "admin@unisys.com", true);
-        createUserIfNotExists("profesor", "profesor123", "profesor@unisys.com", false);
-        createUserIfNotExists("estudiante", "estudiante123", "estudiante@unisys.com", false);
+        if (usersInitialized) {
+            return; // Solo ejecutar una vez
+        }
+        
+        try {
+            // Crear usuarios de ejemplo si no existen
+            createUserIfNotExists("admin", "admin123", "admin@unisys.com", true);
+            createUserIfNotExists("profesor", "profesor123", "profesor@unisys.com", false);
+            createUserIfNotExists("estudiante", "estudiante123", "estudiante@unisys.com", false);
+            usersInitialized = true;
+        } catch (Exception e) {
+            System.err.println("Error al crear usuarios: " + e.getMessage());
+        }
     }
 
     private void createUserIfNotExists(String username, String password, String email, boolean isAdmin) {
@@ -30,7 +41,7 @@ public class UserSeeder {
             User user = new User();
             user.setUsername(username);
             user.setPassword(password);
-          
+           
             user.setAdmin(isAdmin);
             
             userService.save(user); // Usa UserService para asignar roles automáticamente
