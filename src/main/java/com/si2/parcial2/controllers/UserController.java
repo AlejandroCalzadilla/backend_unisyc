@@ -1,4 +1,6 @@
 package com.si2.parcial2.controllers;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +25,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.si2.parcial2.entities.User;
-
+import com.si2.parcial2.security.TokenJwtConfig;
 import com.si2.parcial2.services.UserService;
 
+import io.jsonwebtoken.Jwts;
 import jakarta.validation.Valid;
 
 
@@ -70,9 +74,21 @@ public class UserController {
                     new UsernamePasswordAuthenticationToken(username, password));
 
             if (authentication.isAuthenticated()) {
+                // Generar token JWT
+                String token = Jwts.builder()
+                        .subject(username)
+                        .issuedAt(new Date())
+                        .expiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hora
+                        .claim("authorities", authentication.getAuthorities().stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .toList())
+                        .signWith(TokenJwtConfig.SECRET_KEY)
+                        .compact();
+
                 return ResponseEntity.ok(new HashMap<String, String>() {{
-                    put("message", "Login exitoso");
+                    put("token", TokenJwtConfig.PREFIX_TOKEN + token);
                     put("username", username);
+                    put("message", "Login exitoso");
                 }});
             }
         } catch (AuthenticationException e) {
